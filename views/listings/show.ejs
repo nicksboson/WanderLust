@@ -1,0 +1,156 @@
+<% layout("/layouts/boilerplate") %>
+<div class="show-container">
+    <div class="show-header">
+        <h1 class="show-title"><%= listing.title %></h1>
+        <div class="show-location">
+            <i class="fas fa-map-marker-alt me-2"></i>
+            <%= listing.location %>, <%= listing.country %>
+        </div>
+    </div>
+
+    <div class="show-image-container">
+        <img src="<%= listing.image %>" alt="<%= listing.title %>" class="show-image">
+        <div class="show-price">
+            &#8377;<%= listing.price %> / night
+        </div>
+    </div>
+
+    <div class="show-content">
+        <div class="show-info-grid">
+            <div class="info-card">
+                <i class="fas fa-tag"></i>
+                <h3>Price</h3>
+                <p>&#8377;<%= listing.price %> per night</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Location</h3>
+                <p><%= listing.location %></p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-globe"></i>
+                <h3>Country</h3>
+                <p><%= listing.country %></p>
+            </div>
+        </div>
+
+        <div class="show-description">
+            <h2>About this place</h2>
+            <p><%= listing.description %></p>
+        </div>
+
+        <div class="map-container">
+            <h2>Location on Map</h2>
+            <div id="map" class="map"></div>
+        </div>
+
+        <div class="show-actions">
+            <a href="/listings/<%= listing._id %>/edit" class="btn-edit">
+                <i class="fas fa-edit me-2"></i>Edit
+            </a>
+            <form action="/listings/<%= listing._id %>?_method=DELETE" method="post" class="d-inline">
+                <button type="submit" class="btn-delete">
+                    <i class="fas fa-trash me-2"></i>Delete
+                </button>
+            </form>
+            <a href="/listings" class="btn-back">
+                <i class="fas fa-arrow-left me-2"></i>Back to Listings
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Add Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+<!-- Add custom CSS to hide attribution -->
+<style>
+    .leaflet-control-attribution {
+        display: none !important;
+    }
+</style>
+
+<!-- Add Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+<script>
+    // Initialize Leaflet map
+    const map = L.map('map', {
+        attributionControl: false
+    }).setView([20.5937, 78.9629], 5); // Default to India center
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    // Function to geocode the location
+    async function geocodeLocation(location, country) {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location + ', ' + country)}`);
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                return [parseFloat(lat), parseFloat(lon)];
+            }
+            throw new Error('Location not found');
+        } catch (error) {
+            console.error('Geocoding error:', error);
+            return null;
+        }
+    }
+
+    // Function to update map with location
+    async function updateMapWithLocation() {
+        const location = '<%= listing.location %>';
+        const country = '<%= listing.country %>';
+        
+        const coordinates = await geocodeLocation(location, country);
+        
+        if (coordinates) {
+            // Update map view
+            map.setView(coordinates, 13);
+
+            // Add marker
+            const marker = L.marker(coordinates).addTo(map);
+
+            // Add popup
+            marker.bindPopup(`
+                <div style="padding: 10px;">
+                    <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #2c3e50;">${listing.title}</h3>
+                    <p style="margin: 0; color: #666;">${location}, ${country}</p>
+                </div>
+            `).openPopup();
+
+            // Add custom marker icon
+            const customIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            // Update marker with custom icon
+            marker.setIcon(customIcon);
+        } else {
+            // If geocoding fails, show error message
+            const mapDiv = document.getElementById('map');
+            mapDiv.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #666;">
+                    <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #e74c3c;"></i>
+                    <p style="margin-top: 10px;">Unable to show location on map</p>
+                </div>
+            `;
+        }
+    }
+
+    // Initialize map with location
+    updateMapWithLocation();
+</script>
