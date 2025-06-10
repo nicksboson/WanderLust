@@ -1,35 +1,72 @@
 <% layout("/layouts/boilerplate") %>
 <div class="form-container">
     <h1 class="form-title">Edit Listing</h1>
-    <form action="/listings/<%= listing._id %>?_method=PUT" method="post">
+    <form action="/listings/<%= listing._id %>?_method=PUT" method="post" novalidate class="needs-validation">
         <div class="form-group">
             <label class="form-label" for="title">Title</label>
             <input class="form-control" type="text" id="title" name="listing[title]" value="<%= listing.title %>" required>
+            <div class="valid-feedback">
+                Title looks good
+            </div>
+            <div class="invalid-feedback">
+                Title can't be empty!
+            </div>
         </div>
 
         <div class="form-group">
             <label class="form-label" for="description">Description</label>
             <textarea class="form-control" id="description" name="listing[description]" required><%= listing.description %></textarea>
+            <div class="valid-feedback">
+                Description looks good
+            </div>
+            <div class="invalid-feedback">
+                Please enter a description.
+            </div>
         </div>
 
         <div class="form-group">
             <label class="form-label" for="image">Image URL</label>
             <input class="form-control" type="text" id="image" name="listing[image]" value="<%= listing.image %>" required>
+            <div class="valid-feedback">
+                Image URL looks good
+            </div>
+            <div class="invalid-feedback">
+                Please enter a valid image URL.
+            </div>
         </div>
 
         <div class="form-group">
             <label class="form-label" for="price">Price per Night</label>
-            <input class="form-control" type="number" id="price" name="listing[price]" value="<%= listing.price %>" required>
+            <input class="form-control" type="number" id="price" name="listing[price]" value="<%= listing.price %>" required
+                >
+            <div class="valid-feedback">
+                Price looks good
+            </div>
+            <div class="invalid-feedback">
+                Please enter a price greater than 0.
+            </div>
         </div>
 
         <div class="form-group">
             <label class="form-label" for="location">Location</label>
             <input class="form-control" type="text" id="location" name="listing[location]" value="<%= listing.location %>" required>
+            <div class="valid-feedback">
+                Location looks good
+            </div>
+            <div class="invalid-feedback">
+                Please enter a location.
+            </div>
         </div>
 
         <div class="form-group">
             <label class="form-label" for="country">Country</label>
             <input class="form-control" type="text" id="country" name="listing[country]" value="<%= listing.country %>" required>
+            <div class="valid-feedback">
+                Country looks good
+            </div>
+            <div class="invalid-feedback">
+                Please enter a country.
+            </div>
         </div>
 
         <button type="submit" class="btn-submit">
