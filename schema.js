@@ -65,3 +65,30 @@ const listingSchema = Joi.object({
 });
 
 module.exports = listingSchema;
+
+const reviewSchema = Joi.object({
+    review: Joi.object({
+        rating: Joi.number()
+            .required()
+            .min(1)
+            .max(5)
+            .messages({
+                'number.base': 'Rating must be a number',
+                'number.min': 'Rating must be at least 1',
+                'number.max': 'Rating cannot exceed 5',
+                'any.required': 'Rating is required'
+            }),
+        comment: Joi.string()
+            .required()
+            .min(1)
+            .max(500)
+            .messages({
+                'string.empty': 'Comment cannot be empty',
+                'string.min': 'Comment must be at least 1 character long',
+                'string.max': 'Comment cannot exceed 500 characters',
+                'any.required': 'Comment is required'
+            })
+    }).required()
+});
+
+module.exports = { listingSchema, reviewSchema };

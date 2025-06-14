@@ -11,7 +11,7 @@
     <div class="show-image-container">
         <img src="<%= listing.image %>" alt="<%= listing.title %>" class="show-image">
         <div class="show-price">
-            &#8377;<%= listing.price %> / night
+            &#8377;<%= listing.price.toLocaleString("en-IN") %> / night
         </div>
     </div>
 
@@ -42,6 +42,85 @@
         <div class="map-container">
             <h2>Location on Map</h2>
             <div id="map" class="map"></div>
+            <a href="#" id="googleMapsBtn" class="btn-google-maps" onclick="openGoogleMaps(event)">
+                <i class="fas fa-map-marked-alt me-2"></i>Open in Google Maps
+            </a>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2 style="text-align: center;">Reviews</h2>
+            
+            <!-- Review Form -->
+            <div class="review-form-container">
+                <h3>Write a Review</h3>
+                <form action="/listings/<%= listing._id %>/reviews" method="POST" class="review-form needs-validation" novalidate>
+                    <div class="form-group">
+                        <label for="rating" class="form-label">Rating:</label>
+                        <select name="review[rating]" id="rating" class="form-select" required>
+                            <option value="">Select Rating</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ Very Good</option>
+                            <option value="3">⭐⭐⭐ Good</option>
+                            <option value="2">⭐⭐ Fair</option>
+                            <option value="1">⭐ Poor</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a rating.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment" class="form-label">Your Review:</label>
+                        <textarea name="review[comment]" id="comment" rows="4" class="form-control" required minlength="10" placeholder="Share your experience..."></textarea>
+                        <div class="invalid-feedback">
+                            Please enter a review (minimum 10 characters).
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit-review">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Review
+                    </button>
+                </form>
+            </div>
+
+            <!-- Reviews Display -->
+            <div class="reviews-display">
+                <% if (listing.reviews && listing.reviews.length > 0) { %>
+                    <% listing.reviews.forEach(review => { %>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-rating">
+                                    <% for(let i = 0; i < review.rating; i++) { %>
+                                        <i class="fas fa-star"></i>
+                                    <% } %>
+                                    <% for(let i = review.rating; i < 5; i++) { %>
+                                        <i class="far fa-star"></i>
+                                    <% } %>
+                                </div>
+                                <div class="review-date">
+                                    <%= new Date(review.createdAt).toLocaleDateString() %>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <p><%= review.comment %></p>
+                            </div>
+                            <div class="review-author">
+                                <i class="fas fa-user me-2"></i>
+                                <%= review.author %>
+                            </div>
+                            <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger mt-2">
+                                    <i class="fas fa-trash-alt me-1"></i>Delete
+                                </button>
+                            </form>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-reviews">
+                        <i class="fas fa-comments"></i>
+                        <p>No reviews yet. Be the first to review this place!</p>
+                    </div>
+                <% } %>
+            </div>
         </div>
 
         <div class="show-actions">
@@ -70,6 +149,326 @@
     .leaflet-control-attribution {
         display: none !important;
     }
+
+    /* Google Maps Button Styles */
+    .btn-google-maps {
+        display: block;
+        margin: 1rem auto;
+        padding: 0.75rem 1.5rem;
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-decoration: none;
+        text-align: center;
+        max-width: 200px;
+    }
+
+    .btn-google-maps:hover {
+        background-color: #3367d6;
+    }
+
+    .btn-google-maps i {
+        margin-right: 0.5rem;
+    }
+
+    /* Reviews Section Styles */
+    .reviews-section {
+        margin: 3rem 0;
+        padding: 2.5rem;
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .reviews-section h2 {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .reviews-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, #3498db, #2ecc71);
+        border-radius: 2px;
+    }
+
+    .review-form-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .review-form-container h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .review-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #34495e;
+        font-size: 1.1rem;
+    }
+
+    .form-group select,
+    .form-group textarea {
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        outline: none;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .btn-submit-review {
+        background-color: #3498db;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit-review:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+    }
+
+    .reviews-display {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .review-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .review-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .review-rating {
+        color: #f1c40f;
+        font-size: 1.2rem;
+    }
+
+    .review-date {
+        color: #95a5a6;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .review-content {
+        margin-bottom: 1.25rem;
+        line-height: 1.7;
+        color: #34495e;
+        font-size: 1.05rem;
+    }
+
+    .review-author {
+        color: #2c3e50;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .review-author i {
+        color: #3498db;
+    }
+
+    .no-reviews {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        margin: 2rem auto;
+        max-width: 500px;
+    }
+
+    .no-reviews i {
+        font-size: 3rem;
+        color: #bdc3c7;
+        margin-bottom: 1.5rem;
+    }
+
+    .no-reviews p {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    /* Delete button styling */
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .reviews-section {
+            padding: 1.5rem;
+        }
+
+        .reviews-display {
+            grid-template-columns: 1fr;
+        }
+
+        .review-form-container {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Show Actions Section Styles */
+    .show-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 3rem;
+        justify-content: center;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .show-actions a,
+    .show-actions button {
+        padding: 0.8rem 1.8rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .btn-edit {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-delete {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-back {
+        background-color: #95a5a6;
+        color: white;
+    }
+
+    .btn-back:hover {
+        background-color: #7f8c8d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(149, 165, 166, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .show-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .show-actions a,
+        .show-actions button {
+            width: 100%;
+        }
+    }
 </style>
 
 <!-- Add Leaflet JavaScript -->
@@ -78,14 +477,55 @@
     crossorigin=""></script>
 
 <script>
+    // JavaScript for client-side validation
+    (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+
+    // Function to open Google Maps
+    function openGoogleMaps(event) {
+        event.preventDefault();
+        const location = '<%= listing.location %>';
+        const country = '<%= listing.country %>';
+        console.log('Google Maps: Location - ', location, ', Country - ', country);
+        const searchQuery = encodeURIComponent(`${location}, ${country}`);
+        const url = `https://www.google.com/maps/search/${searchQuery}`;
+        console.log('Google Maps: Generated URL - ', url);
+        window.open(url, '_blank');
+    }
+
     // Initialize Leaflet map
     const map = L.map('map', {
-        attributionControl: false
-    }).setView([20.5937, 78.9629], 5); // Default to India center
+        attributionControl: false,
+        zoomControl: false,
+        dragging: false,
+        touchZoom: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false
+    }).setView([20.5937, 78.9629], 5);
 
-    // Add OpenStreetMap tiles
+    // Add OpenStreetMap tiles (reverted to original)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
+        maxZoom: 19,
+        language: 'en' // Keeping English language setting
     }).addTo(map);
 
     // Function to geocode the location
@@ -109,17 +549,20 @@
     async function updateMapWithLocation() {
         const location = '<%= listing.location %>';
         const country = '<%= listing.country %>';
+        console.log('Google Maps: Location - ', location, ', Country - ', country);
         
         const coordinates = await geocodeLocation(location, country);
         
         if (coordinates) {
-            // Update map view
+            // Update map view with fixed zoom level
             map.setView(coordinates, 13);
 
-            // Add marker
-            const marker = L.marker(coordinates).addTo(map);
+            // Add marker (reverted to original size)
+            const marker = L.marker(coordinates, {
+                interactive: false // Make marker non-interactive
+            }).addTo(map);
 
-            // Add popup
+            // Add popup (reverted to original simple style)
             marker.bindPopup(`
                 <div style="padding: 10px;">
                     <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #2c3e50;">${listing.title}</h3>
@@ -127,7 +570,7 @@
                 </div>
             `).openPopup();
 
-            // Add custom marker icon
+            // Add custom marker icon (reverted to original size)
             const customIcon = L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
                 shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -139,6 +582,7 @@
 
             // Update marker with custom icon
             marker.setIcon(customIcon);
+
         } else {
             // If geocoding fails, show error message
             const mapDiv = document.getElementById('map');
@@ -148,6 +592,7 @@
                     <p style="margin-top: 10px;">Unable to show location on map</p>
                 </div>
             `;
+            document.getElementById('googleMapsBtn').style.display = 'none';
         }
     }
 
