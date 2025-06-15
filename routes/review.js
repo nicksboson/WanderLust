@@ -4,10 +4,10 @@ const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing");
 const Review = require("../models/review");
-const { validateReview, isValidId } = require("../utils/middleware");
+const { validateReview, isValidId ,loggedIn} = require("../utils/middleware");
 
 //Review Section
-router.post("/", validateReview, wrapAsync(async (req, res) => {
+router.post("/", validateReview, loggedIn,wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     let newrev = new Review(
@@ -16,6 +16,7 @@ router.post("/", validateReview, wrapAsync(async (req, res) => {
     await newrev.save(); // Save the review first
     listing.reviews.push(newrev._id); // Push only the ID to the listing's reviews array
     await listing.save(); // Then save the listing
+    req.flash('success', 'Review added successfully!');
     console.log("Review Saved ........ ");
     res.redirect(`/listings/${listing._id}`);
 }));
@@ -27,6 +28,7 @@ router.delete("/:reviewId", wrapAsync(async (req, res) => {
     await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     // Delete the review document itself
     await Review.findByIdAndDelete(reviewId);
+    req.flash('error', 'Review deleted successfully!');
     console.log("Review Deleted ........ ");
     res.redirect(`/listings/${id}`);
 }));

@@ -107,11 +107,13 @@
                                 <i class="fas fa-user me-2"></i>
                                 <%= review.author %>
                             </div>
+                            <% if(typeof currentUser !== 'undefined' && currentUser) { %>
                             <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-danger mt-2">
                                     <i class="fas fa-trash-alt me-1"></i>Delete
                                 </button>
                             </form>
+                            <%}%>
                         </div>
                     <% }); %>
                 <% } else { %>
@@ -122,8 +124,8 @@
                 <% } %>
             </div>
         </div>
-
-        <div class="show-actions">
+        <% if(typeof currentUser !== 'undefined' && currentUser) { %>
+        <div class="show-actions" >
             <a href="/listings/<%= listing._id %>/edit" class="btn-edit">
                 <i class="fas fa-edit me-2"></i>Edit
             </a>
@@ -132,10 +134,15 @@
                     <i class="fas fa-trash me-2"></i>Delete
                 </button>
             </form>
-            <a href="/listings" class="btn-back">
+        </div>
+            <%}else{%>
+                <div class="show-actions" >
+            <a href="/listings" class="btn-back" >
                 <i class="fas fa-arrow-left me-2"></i>Back to Listings
             </a>
         </div>
+            <%}%>
+        
     </div>
 </div>
 

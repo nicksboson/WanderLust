@@ -26,5 +26,18 @@ const validateReview = (req, res, next) => {
     }
     next();
 };
+const loggedIn  = (req,res,next)=>{
+    if(!req.isAuthenticated()){
+        req.session.returnTo = req.originalUrl;
+        req.flash("error","You must be logged in !");
+        return res.redirect("/login");
+    }
+    next();
+}
 
-module.exports = { validateListing, validateReview, isValidId }; 
+
+const redirect = (req,res,next)=>{
+    res.redirect(req.session.returnTo);
+    next();
+}
+module.exports = { validateListing, validateReview, isValidId ,loggedIn,redirect}; 

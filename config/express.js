@@ -17,6 +17,12 @@ function configureExpress(app) {
     app.use(methodOverride('_method'));
     app.use(express.json());
 
+    // Make currentUser available to all views
+    app.use((req, res, next) => {
+        res.locals.currentUser = req.user;
+        next();
+    });
+
     // View engine setup
     app.engine('ejs', ejsMate);
     app.set('view engine', 'ejs');

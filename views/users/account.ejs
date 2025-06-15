@@ -1,0 +1,76 @@
+<%- include('../partials/header') %>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="mb-0 text-center">
+                        <i class="fas fa-user-circle text-primary me-2"></i>
+                        My Account
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="avatar-placeholder mb-3">
+                            <i class="fas fa-user fa-3x text-muted"></i>
+                        </div>
+                        <h3 class="mb-1"><%= user.username %></h3>
+                        <p class="text-muted mb-4"><%= user.email %></p>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="/listings/my-listings" class="btn btn-outline-primary w-100 py-3">
+                                <i class="fas fa-list me-2"></i>
+                                My Listings
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="/listings/new" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-plus me-2"></i>
+                                Create New Listing
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #eee;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .btn {
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+
+<%- include('../partials/footer') %> 

@@ -40,6 +40,7 @@ router.get('/new', (req, res) => {
 router.post('/', validateListing, wrapAsync(async (req, res) => {
     const newlisting = new Listing(req.body.listing);
     await newlisting.save();
+    req.flash('success', 'Successfully created a new listing !');
     res.redirect(`/listings`);
 }));
 
@@ -82,6 +83,7 @@ router.put('/:id', validateListing, wrapAsync(async (req, res) => {
     if (!updatedListing) {
         throw new ExpressError(404, 'Listing not found');
     }
+    req.flash('info', 'Listing updated successfully!');
     res.redirect(`/listings/${updatedListing._id}`);
 }));
 
@@ -95,6 +97,7 @@ router.delete('/:id', wrapAsync(async (req, res) => {
     if (!deletedListing) {
         throw new ExpressError(404, 'Listing not found');
     }
+    req.flash('error', 'Listing deleted successfully!');
     res.redirect('/listings');
 }));
 

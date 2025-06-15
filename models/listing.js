@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Review = require("./review.js") // Ensure Review model is imported
-
+const user = require("./user.js")
 const listingSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -30,7 +30,11 @@ const listingSchema = new mongoose.Schema({
     reviews :[{
         type : mongoose.Schema.Types.ObjectId,
         ref:"Review"
-    }]
+    }],
+    owner :{
+        type : mongoose.Schema.Types.ObjectId,
+        ref:"user"
+    }
 });
 
 // Mongoose Middleware to delete associated reviews when a listing is deleted
