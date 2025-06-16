@@ -39,6 +39,7 @@ router.get('/new', (req, res) => {
 // Create new listing
 router.post('/', validateListing, wrapAsync(async (req, res) => {
     const newlisting = new Listing(req.body.listing);
+    newlisting.owner= req.user._id;
     await newlisting.save();
     req.flash('success', 'Successfully created a new listing !');
     res.redirect(`/listings`);
@@ -50,7 +51,8 @@ router.get('/:id', wrapAsync(async (req, res) => {
     if (!isValidId(id)) {
         throw new ExpressError(400, "Invalid listing ID");
     }
-    const listing = await Listing.findById(id).populate('reviews');
+    const listing = await Listing.findById(id).populate({path: 'reviews',populate: {path : 'author'}}).populate('owner');
+    console.log(listing);
     if (!listing) {
         throw new ExpressError(404, 'Listing not found');
     }

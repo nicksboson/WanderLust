@@ -59,8 +59,9 @@ async function seedReviewsAndListings() {
                 const reviewData = defaultReviewContents[i % defaultReviewContents.length]; // Cycle through content
                 const newReview = new Review({
                     ...reviewData,
-                    author: `SeederBot_${listing._id.toString().substring(0, 5)}_${i}` // More unique author for easy tracking
+                   
                 });
+                
                 await newReview.save();
                 newReviewsForListing.push(newReview._id);
             }

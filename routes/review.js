@@ -12,7 +12,9 @@ router.post("/", validateReview, loggedIn,wrapAsync(async (req, res) => {
     let listing = await Listing.findById(id);
     let newrev = new Review(
         req.body.review)
-    newrev.author = "Anonymous"; // Set a default author
+        // Set a default author
+        newrev.author = req.user._id;
+        console.log(newrev);
     await newrev.save(); // Save the review first
     listing.reviews.push(newrev._id); // Push only the ID to the listing's reviews array
     await listing.save(); // Then save the listing
