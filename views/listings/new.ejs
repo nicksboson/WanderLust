@@ -1,7 +1,7 @@
 <% layout('/layouts/boilerplate') %>
 <div class="form-container">
     <h1 class="form-title">Create New Listing</h1>
-    <form action="/listings" method="POST" novalidate class="needs-validation">
+    <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
         <div class="form-group">
             <label class="form-label" for="title">Title</label>
             <input class="form-control" type="text" id="title" name="listing[title]" required placeholder="Add a catchy title">
@@ -25,14 +25,15 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="image">Image URL</label>
-            <input class="form-control" type="text" id="image" name="listing[image]"  placeholder="Enter image URL" >
+            <label class="form-label" for="image">Upload Image File</label>
+            <input class="form-control" type="file" id="image" name="listing[image]"  placeholder="Enter image URL" >
             <div class="valid-feedback">
                 Image URL looks good
             </div>
             <div class="invalid-feedback">
                 Please enter a valid image URL.
             </div>
+          <img id="imagePreview" src="#" alt="Image Preview" style="display:none; max-width: 100%; margin-top: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" />
         </div>
 
         <div class="form-group">
@@ -74,3 +75,20 @@
         </button>
     </form>
 </div>
+<script>
+    document.getElementById('image').addEventListener('change', function(event) {
+        const preview = document.getElementById('imagePreview');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '#';
+            preview.style.display = 'none';
+        }
+    });
+    </script>

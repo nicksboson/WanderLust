@@ -57,8 +57,10 @@ exports.getMyListings = async (req, res) => {
 };
 
 exports.createListing = async (req, res) => {
+    let url = req.file.path;
     const newlisting = new Listing(req.body.listing);
     newlisting.owner = req.user._id;
+    newlisting.image = url;
     await newlisting.save();
     req.flash('success', 'Successfully created a new listing !');
     res.redirect(`/listings`);
@@ -90,6 +92,7 @@ exports.renderEditForm = async (req, res) => {
 
 exports.updateListing = async (req, res) => {
     const { id } = req.params;
+    const url = req.file.path;
     if (!isValidId(id)) {
         throw new ExpressError(400, "Invalid listing ID");
     }
@@ -97,6 +100,10 @@ exports.updateListing = async (req, res) => {
         new: true,
         runValidators: true
     });
+    if(typeof req.file!== "undefined"){
+    updatedListing.image = url;
+await updatedListing.save();
+}
     if (!updatedListing) {
         throw new ExpressError(404, 'Listing not found');
     }
