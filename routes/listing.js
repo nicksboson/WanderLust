@@ -4,6 +4,12 @@ const wrapAsync = require("../utils/wrapAsync");
 const { validateListing } = require("../utils/middleware");
 const listingController = require("../controllers/listingController");
 
+
+
+const multer = require("multer");
+const {storage} = require("../cloudConfig.js");
+const upload = multer({storage});
+
 // Index route
 router.get('/', wrapAsync(listingController.getAllListings));
 
@@ -14,7 +20,8 @@ router.get('/new', listingController.renderNewForm);
 router.get('/my-listings', wrapAsync(listingController.getMyListings));
 
 // Create new listing
-router.post('/', validateListing, wrapAsync(listingController.createListing));
+ router.post('/', upload.single('listing[image]'),validateListing, wrapAsync(listingController.createListing));
+
 
 // Show listing
 router.get('/:id', wrapAsync(listingController.showListing));
@@ -23,7 +30,7 @@ router.get('/:id', wrapAsync(listingController.showListing));
 router.get('/:id/edit', wrapAsync(listingController.renderEditForm));
 
 // Update listing
-router.put('/:id', validateListing, wrapAsync(listingController.updateListing));
+router.put('/:id',upload.single('listing[image]'), validateListing, wrapAsync(listingController.updateListing));
 
 // Delete listing
 router.delete('/:id', wrapAsync(listingController.deleteListing));
