@@ -14,21 +14,37 @@ const isValidId = (id) => {
 
 // Index route
 router.get('/', wrapAsync(async (req, res) => {
-    const listings = await Listing.find({}).populate('reviews');
+    const { search } = req.query;
+    let query = {};
+
+    if (search) {
+        const searchRegex = new RegExp(search, 'i'); // Case-insensitive search
+        query = {
+            $or: [
+                { title: { $regex: searchRegex } },
+                { description: { $regex: searchRegex } },
+                { location: { $regex: searchRegex } },
+                { country: { $regex: searchRegex } }
+            ]
+        };
+    }
+
+    const listings = await Listing.find(query).populate('reviews');
+    console.log('Found listings:', listings);
     
     // Calculate average rating for each listing
     listings.forEach(listing => {
         if (listing.reviews && listing.reviews.length > 0) {
             const totalRating = listing.reviews.reduce((sum, review) => sum + review.rating, 0);
-            listing.averageRating = (totalRating / listing.reviews.length).toFixed(1); // To one decimal place
-            listing.numReviews = listing.reviews.length; // Keep for internal calculation, not displayed now
+            listing.averageRating = (totalRating / listing.reviews.length).toFixed(1);
+            listing.numReviews = listing.reviews.length;
         } else {
             listing.averageRating = 0;
             listing.numReviews = 0;
         }
     });
 
-    res.render('./listings/index.ejs', { listings });
+    res.render('./listings/index.ejs', { listings, search }); // Pass search term to template
 }));
 
 // New listing form
@@ -36,11 +52,45 @@ router.get('/new', (req, res) => {
     res.render('./listings/new.ejs');
 });
 
+// My Listings route - MUST come before /:id route
+router.get('/my-listings', wrapAsync(async (req, res) => {
+    if (!req.user) {
+        req.flash('error', 'You must be logged in to view your listings');
+        return res.redirect('/login');
+    }
+    
+    console.log('Current user ID:', req.user._id);
+    const listings = await Listing.find({ owner: req.user._id }).populate('reviews');
+    console.log('Found listings:', listings);
+    
+    // Calculate average rating for each listing
+    listings.forEach(listing => {
+        if (listing.reviews && listing.reviews.length > 0) {
+            const totalRating = listing.reviews.reduce((sum, review) => sum + review.rating, 0);
+            listing.averageRating = (totalRating / listing.reviews.length).toFixed(1);
+            listing.numReviews = listing.reviews.length;
+        } else {
+            listing.averageRating = 0;
+            listing.numReviews = 0;
+        }
+    });
+
+    res.render('./listings/my-listings.ejs', { listings });
+}));
+
 // Create new listing
 router.post('/', validateListing, wrapAsync(async (req, res) => {
+    console.log('Received listing data:', req.body.listing);
+    console.log('Current user:', req.user);
+    
     const newlisting = new Listing(req.body.listing);
-    newlisting.owner= req.user._id;
+    newlisting.owner = req.user._id;
+    
+    console.log('New listing object:', newlisting);
+    
     await newlisting.save();
+    console.log('Listing saved successfully:', newlisting);
+    
     req.flash('success', 'Successfully created a new listing !');
     res.redirect(`/listings`);
 }));
@@ -48,11 +98,15 @@ router.post('/', validateListing, wrapAsync(async (req, res) => {
 // Show listing
 router.get('/:id', wrapAsync(async (req, res) => {
     const { id } = req.params;
+    console.log('Show route - Listing ID:', id);
+    console.log('Is valid ID:', isValidId(id));
+    
     if (!isValidId(id)) {
         throw new ExpressError(400, "Invalid listing ID");
     }
     const listing = await Listing.findById(id).populate({path: 'reviews',populate: {path : 'author'}}).populate('owner');
-    console.log(listing);
+    console.log('Found listing:', listing);
+    
     if (!listing) {
         throw new ExpressError(404, 'Listing not found');
     }

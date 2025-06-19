@@ -102,7 +102,7 @@ console.log('Models before router usage:', mongoose.modelNames());
 
 // Routes
 app.get('/', (req, res) => {
-    res.render("listings/home.ejs");
+    res.redirect("/listings");
 });
 
 // Google OAuth Routes - Commented out until credentials are set up

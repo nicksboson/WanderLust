@@ -2,23 +2,13 @@
     <div class="container">
         <a class="navbar-brand" href="/">
             <i class="fa-regular fa-compass brand-icon"></i>
-            <span class="brand-text">Wanderlust</span>
+            <span class="brand-text">WanderLust</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/">
-                        <i class="fas fa-home me-1"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/listings">
-                        <i class="fas fa-list me-1"></i>All Listings
-                    </a>
-                </li>
+            <ul class="navbar-nav me-auto">
                 <% if(typeof currentUser !== 'undefined' && currentUser) { %>
                     <li class="nav-item">
                         <a class="nav-link" href="/listings/new">
@@ -27,6 +17,17 @@
                     </li>
                 <% } %>
             </ul>
+            <div class="navbar-search-center d-flex justify-content-center flex-grow-1">
+                <form action="/listings" method="GET" class="navbar-search-form">
+                    <div class="search-bar-navbar">
+                        <span class="search-label">Plan Your Next Destination</span>
+                        <input type="text" placeholder="Search destinations" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>">
+                        <button class="search-button-navbar" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
             <ul class="navbar-nav ms-auto">
                 <% if(typeof currentUser !== 'undefined' && currentUser) { %>
                     
@@ -36,7 +37,7 @@
                         </a>
                     </li>
                     <li class="nav-item me-2">
-                        <a class="nav-link login-btn" href="/logout">
+                        <a class="nav-link logout-btn" href="/logout">
                             <i class="fas fa-user me-1"></i>Logout
                         </a>
                     </li>
@@ -60,7 +61,7 @@
     }
     
     .brand-icon {
-        color: #e57373; /* A soft red/orange for the compass icon */
+        color: red; /* A soft red/orange for the compass icon */
         font-size: 1.5rem;
         margin-right: 0.5rem;
     }
@@ -111,11 +112,131 @@
         background-color: #dc3545 !important;
     }
 
+    /* Navbar Search Bar Styles */
+    .navbar-search-center {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        padding: 0 15px;
+    }
+
+    .navbar-search-form {
+        width: 100%;
+        max-width: 500px; /* Keep this max-width for overall bar length */
+    }
+
+    .search-bar-navbar {
+        background-color: #fff;
+        border-radius: 30px;
+        padding: 8px 15px; 
+        display: flex;
+        align-items: center;
+        width: 100%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0; /* Subtle border */
+    }
+
+    .search-bar-navbar:focus-within {
+        box-shadow: 0 0 0 2px #cce0ff, 0 1px 3px rgba(0,0,0,0.1); /* Blue glow on focus */
+        border-color: #a0c3ff; /* Lighter blue border on focus */
+    }
+
+    .search-label {
+        font-weight: 600;
+        font-size: 0.75rem; 
+        color: #333;
+        white-space: nowrap;
+        margin-right: 8px; 
+        transform: translateY(-0.35rem);
+    }
+
+    .search-bar-navbar input {
+        border: none;
+        outline: none;
+        flex-grow: 1; 
+        font-size: 0.9rem;
+        color: #222; /* Darker text for readability */
+        background: transparent;
+        padding: 0;
+    }
+
+    .search-bar-navbar input::placeholder {
+        color: #777; /* Darker placeholder */
+    }
+
+    .search-button-navbar {
+        background-color: #ff385c;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        flex-shrink: 0; 
+        margin-left: 10px; 
+    }
+
+    .search-button-navbar:hover {
+        background-color: #e0005b;
+    }
+
+    /* Adjusted for the label-on-top layout */
+    .search-bar-navbar {
+        flex-direction: row; /* Keep elements in a row */
+    }
+
+    .search-bar-navbar .search-label {
+        display: block; /* Make label a block element for stacking */
+        margin-bottom: -5px; /* Pull label closer to input */
+        line-height: 1;
+        font-size: 0.8rem; /* Slightly smaller label */
+        text-align: left;
+    }
+
+    .search-bar-navbar input {
+        padding-top: 5px; /* Space between label and input text */
+    }
+
+    .search-bar-navbar .search-label + input {
+        margin-top: 0; /* No extra margin between label and input */
+    }
+
+    /* Additional styles to make it look like the image */
+    .search-bar-navbar {
+        padding: 10px 15px; /* Adjust padding for visual balance */
+    }
+
+    .search-bar-navbar input {
+     /* Light blue background for input area */
+        border-radius: 5px; /* Slight roundness for input area */
+        padding: 5px 10px; /* Padding inside the input area */
+        margin-left: 8px; /* Space between label and input field */
+    }
+
+    .search-bar-navbar .search-label {
+        flex-grow: 0; /* Prevent label from growing */
+        flex-shrink: 0; /* Prevent label from shrinking */
+        padding-top: 5px; /* Align label vertically */
+        align-self: center;
+    }
+
+    .search-button-navbar {
+        margin-left: auto; /* Push button to the right */
+    }
+
     /* Mobile responsiveness */
     @media (max-width: 768px) {
-        .navbar-nav.ms-auto {
+        .navbar-nav.ms-auto,
+        .navbar-nav.me-auto {
             margin-left: 0 !important;
-            margin-top: 10px;
+            margin-right: 0 !important;
+            width: 100%;
+            text-align: center;
         }
 
         .nav-item {
@@ -126,6 +247,16 @@
             width: 100%;
             text-align: center;
         }
-    }
 
+        .navbar-search-center {
+            order: 1; /* Place search bar above nav links on mobile */
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 0;
+        }
+
+        .navbar-search-form {
+            max-width: 100%;
+        }
+    }
 </style>
