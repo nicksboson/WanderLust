@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const MONGO_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/wanderlust';
+const url = process.env.ATLASDB_URL ;
 
 // MongoDB connection
 async function connectDB() {
     try {
-        await mongoose.connect(MONGO_URL);
+        await mongoose.connect(url);
         console.log("Connected to MongoDB");
     } catch (err) {
         console.error("Error connecting to MongoDB:", err);

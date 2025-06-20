@@ -6,6 +6,7 @@ const connectDB = require('./config/database');
 const configureExpress = require('./config/express');
 const { notFoundHandler, errorHandler } = require('./utils/errorHandler');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -19,10 +20,27 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require('./routes/user.js');
 
+
+
 // Configure Express
 configureExpress(app);
 
+const store = MongoStore.create({
+    mongoUrl: process.env.ATLASDB_URL,
+    crypto:{
+        secret: process.env.SESSION_SECRET || "Supersecret",
+
+    },
+    touchAfter:24*3600,
+
+})
+
+store.on("error",()=>{
+    console.log("error occured in mongo store ",err);
+});
+
 const sessionOption = {
+    store,
     secret: process.env.SESSION_SECRET || "Supersecret",
     resave: false,
     saveUninitialized: true,
@@ -71,6 +89,8 @@ async function(accessToken, refreshToken, profile, cb) {
     }
 }));
 */
+
+
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
