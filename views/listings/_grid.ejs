@@ -1,0 +1,59 @@
+<div id="listings-grid-container">
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 listing-grid">
+        <% for(let list of listings) { %>
+            <div class="col mb-4">
+                <a href="/listings/<%= list._id %>" class="text-decoration-none">
+                    <div class="card h-100">
+                        <div class="position-relative">
+                            <img src="<%= list.image %>" class="card-img-top" alt="<%= list.title %>">
+                            <div class="price-badge">
+                                ₹<%= list.price.toLocaleString('en-IN') %>/night <span class="pricer">+ 18% GST</span>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-truncate"><%= list.title %></h5>
+                            <p class="card-text">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                <span class="text-truncate d-inline-block" style="max-width: 100%;">
+                                    <%= list.location %>, <%= list.country %>
+                                </span>
+                            </p>
+                            <div class="rating mt-auto">
+                                <% if (list.numReviews > 0) { %>
+                                    <% let fullStars = Math.floor(list.averageRating); %>
+                                    <% for(let i = 0; i < fullStars; i++) { %>
+                                        <i class="fas fa-star"></i>
+                                    <% } %>
+                                    <% if (list.averageRating - fullStars >= 0.5) { %>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <% fullStars++; %>
+                                    <% } %>
+                                    <% for(let i = fullStars; i < 5; i++) { %>
+                                        <i class="far fa-star"></i>
+                                    <% } %>
+                                    <span class="ms-1 text-muted">(<%= list.averageRating %>)</span>
+                                <% } else { %>
+                                    <% let randomDisplayRating = (Math.random() * (5 - 3.5) + 3.5).toFixed(1); %>
+                                    <% let fullStars = Math.floor(randomDisplayRating); %>
+                                    <% for(let i = 0; i < fullStars; i++) { %>
+                                        <i class="fas fa-star"></i>
+                                    <% } %>
+                                    <% if (randomDisplayRating - fullStars >= 0.5) { %>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <% fullStars++; %>
+                                    <% } %>
+                                    <% for(let i = fullStars; i < 5; i++) { %>
+                                        <i class="far fa-star"></i>
+                                    <% } %>
+                                    <span class="ms-1 text-muted">(<%= randomDisplayRating %>)</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        <% } %>
+    </div>
+</div>
+</div> 

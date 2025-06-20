@@ -35,4 +35,7 @@ router.put('/:id',upload.single('listing[image]'), cleanListingFields, validateL
 // Delete listing
 router.delete('/:id', wrapAsync(listingController.deleteListing));
 
+// Partial listings grid for AJAX filtering
+router.get('/partial', wrapAsync(listingController.getPartialListings));
+
 module.exports = router; 
