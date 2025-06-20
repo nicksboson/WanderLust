@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
-const { validateListing } = require("../utils/middleware");
+const { validateListing, cleanListingFields } = require("../utils/middleware");
 const listingController = require("../controllers/listingController");
 
 
@@ -30,7 +30,7 @@ router.get('/:id', wrapAsync(listingController.showListing));
 router.get('/:id/edit', wrapAsync(listingController.renderEditForm));
 
 // Update listing
-router.put('/:id',upload.single('listing[image]'), validateListing, wrapAsync(listingController.updateListing));
+router.put('/:id',upload.single('listing[image]'), cleanListingFields, validateListing, wrapAsync(listingController.updateListing));
 
 // Delete listing
 router.delete('/:id', wrapAsync(listingController.deleteListing));

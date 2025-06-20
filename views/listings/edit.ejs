@@ -26,7 +26,11 @@
 
         <div class="form-group">
             <label class="form-label" for="image"> Upload Image file</label>
-            <input class="form-control" type="file" id="image" name="listing[image]" value="<%= listing.image %>" required>
+            <input class="form-control" type="file" id="image" name="listing[image]">
+            <small class="form-text text-muted">Current image shown below. Upload a new file to replace it.</small>
+            <div style="margin-top: 0.5rem; color: #888;">
+                Current file: <%= listing.image.split('/').pop() %>
+            </div>
             <div class="valid-feedback">
                 Image URL looks good
             </div>

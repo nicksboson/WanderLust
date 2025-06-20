@@ -26,6 +26,7 @@ const validateReview = (req, res, next) => {
     }
     next();
 };
+
 const loggedIn  = (req,res,next)=>{
     if(!req.isAuthenticated()){
         req.session.returnTo = req.originalUrl;
@@ -40,4 +41,13 @@ const redirect = (req,res,next)=>{
     res.redirect(req.session.returnTo);
     next();
 }
-module.exports = { validateListing, validateReview, isValidId ,loggedIn,redirect}; 
+
+// Remove any fields not allowed by the Joi schema
+const cleanListingFields = (req, res, next) => {
+    if (req.body && req.body.listing && req.body.listing.currentImage) {
+        delete req.body.listing.currentImage;
+    }
+    next();
+};
+
+module.exports = { validateListing, validateReview, isValidId ,loggedIn,redirect, cleanListingFields }; 
