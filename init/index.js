@@ -1,10 +1,12 @@
+require('dotenv').config();
+console.log('ATLASDB_URL:', process.env.ATLASDB_URL); // Debug print
 const mongoose = require('mongoose');
 const initdata = require('./data.js');
 const Listing = require('../models/listing.js');  
 const Review = require('../models/review.js');
 const User = require('../models/user.js');
 
-const MONGO_URL = 'mongodb://localhost:27017/wanderlust'; 
+const url = process.env.ATLASDB_URL ;
 
 main()
 .then(() => {
@@ -15,7 +17,7 @@ main()
 }); 
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(url);
 }
 
 const randomNames = [
@@ -67,7 +69,11 @@ function getRandomDateBefore(maxDate) {
 
 const initDB = async ()=>{ 
     // Drop the entire database to ensure a clean slate
-    await mongoose.connection.dropDatabase();
+    await Promise.all([
+      mongoose.connection.collection('users').deleteMany({}),
+      mongoose.connection.collection('listings').deleteMany({}),
+      mongoose.connection.collection('reviews').deleteMany({})
+    ]);
 
     // Seed users with random names and collect their IDs
     const userSeeds = randomNames.map(name => ({ email: getRandomEmail(name), username: name }));
