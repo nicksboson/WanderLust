@@ -48,7 +48,7 @@
     </div>
 </div>
 
-
+<div id="listings-grid-container"></div>
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 listing-grid">
         <% for(let list of listings) { %>
@@ -105,6 +105,7 @@
             </div>
         <% } %>
     </div>
+</div>
 </div>
 
 <div id="loader-overlay">
@@ -613,7 +614,7 @@
         'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+       'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1465156799763-2c087c332922?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
@@ -721,20 +722,56 @@
             params.delete('category');
             // Add back selected
             current.forEach(c => params.append('category', c));
-            // Build new URL
-            url.search = params.toString();
-            window.location.href = url.pathname + (url.search ? '?' + url.search : '');
+            // Build new URL for AJAX
+            const fetchUrl = '/listings/partial' + (params.toString() ? '?' + params.toString() : '');
+            fetch(fetchUrl)
+                .then(res => res.text())
+                .then(html => {
+                    // Replace the listings grid
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newGrid = doc.querySelector('#listings-grid-container');
+                    const oldGrid = document.querySelector('#listings-grid-container');
+                    if (newGrid && oldGrid) {
+                        oldGrid.replaceWith(newGrid);
+                    }
+                    // Update active categories
+                    document.querySelectorAll('.category-item').forEach(el => {
+                        if (current.includes(el.getAttribute('data-category'))) {
+                            el.classList.add('active-category');
+                        } else {
+                            el.classList.remove('active-category');
+                        }
+                    });
+                    // Update URL without reload
+                    window.history.replaceState({}, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
+                });
         });
     }
 
-    // Clear Filters button logic
+    // Clear Filters button logic (AJAX)
     const clearBtn = document.getElementById('clearFiltersBtn');
     if (clearBtn) {
         clearBtn.addEventListener('click', function(e) {
             e.preventDefault();
             const url = new URL(window.location.href);
             url.searchParams.delete('category');
-            window.location.href = url.pathname + (url.search ? '?' + url.search : '');
+            const fetchUrl = '/listings/partial' + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '');
+            fetch(fetchUrl)
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newGrid = doc.querySelector('#listings-grid-container');
+                    const oldGrid = document.querySelector('#listings-grid-container');
+                    if (newGrid && oldGrid) {
+                        oldGrid.replaceWith(newGrid);
+                    }
+                    document.querySelectorAll('.category-item').forEach(el => {
+                        el.classList.remove('active-category');
+                    });
+                    window.history.replaceState({}, '', window.location.pathname);
+                });
         });
     }
 
