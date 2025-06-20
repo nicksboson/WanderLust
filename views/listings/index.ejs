@@ -13,47 +13,31 @@
 </div>
 <br><br>
 <div class="filter-section-container">
-    <button class="filters-button">
-        <i class="fas fa-filter"></i> Filters
-    </button>
-    <div class="filter-categories">
-        <div class="category-item">
-            <i class="fas fa-tractor"></i> 
-            <span>Farms</span>
-        </div>
-        <div class="category-item">
-            <i class="fas fa-bed"></i> 
-            <span>Rooms</span>
-        </div>
-        <div class="category-item">
-            <i class="fas fa-mountain"></i> 
-            <span>Amazing views</span>
-        </div>
-        <div class="category-item">
-            <i class="fas fa-city"></i> 
-            <span>Iconic cities</span>
-        </div>
-        <div class="category-item">
-            <i class="fas fa-swimming-pool"></i> 
-            <span>Amazing pools</span>
-        </div>
-        <div class="category-item">
-            <i class="fas fa-umbrella-beach"></i> 
-            <span>Beach</span>
-        </div>
-        <div class="category-item">
-            <i class="fas fa-home"></i> 
-            <span>Cabins</span>
-        </div>
-      
-        <div class="category-item">
-            <i class="fas fa-water"></i> 
-            <span>Lakefront</span>
-        </div>
-        
+
+    <div class="filter-categories" id="filterCategories">
+        <% const categories = ["Farms", "Rooms", "Amazing views", "Iconic cities", "Amazing pools", "Beach", "Cabins", "Lakes"]; %>
+        <% let selectedCategories = []; %>
+        <% if (category) { %>
+            <% if (Array.isArray(category)) { selectedCategories = category; } else { selectedCategories = [category]; } %>
+        <% } %>
+        <% categories.forEach(function(cat) { %>
+            <div class="category-item <%= selectedCategories.includes(cat) ? 'active-category' : '' %>" data-category="<%= cat %>">
+                <% if(cat === 'Farms'){ %><i class="fas fa-tractor"></i><% } %>
+                <% if(cat === 'Rooms'){ %><i class="fas fa-bed"></i><% } %>
+                <% if(cat === 'Amazing views'){ %><i class="fas fa-mountain"></i><% } %>
+                <% if(cat === 'Iconic cities'){ %><i class="fas fa-city"></i><% } %>
+                <% if(cat === 'Amazing pools'){ %><i class="fas fa-swimming-pool"></i><% } %>
+                <% if(cat === 'Beach'){ %><i class="fas fa-umbrella-beach"></i><% } %>
+                <% if(cat === 'Cabins'){ %><i class="fas fa-home"></i><% } %>
+                <% if(cat === 'Lakes'){ %><i class="fas fa-water"></i><% } %>
+                <span><%= cat %></span>
+            </div>
+        <% }); %>
     </div>
     <div class="filter-options">
-        
+        <button id="clearFiltersBtn" class="filters-button" style="margin-right: 1rem; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; margin-bottom: 15px;">
+ Clear Filters
+        </button>
         <div class="toggle-switch-container">
             <span>Display total after taxes</span>
             <label class="switch">
@@ -562,6 +546,13 @@
 
     .slider1 { opacity: 1; }
     .slider2 { opacity: 0; }
+
+    .active-category {
+        background: #e3eaff;
+        border: 1.5px solid #2563eb;
+        color: #2563eb;
+        font-weight: bold;
+    }
 </style>
 
 <script>
@@ -570,7 +561,16 @@
         'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop'
+        'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1465156799763-2c087c332922?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1468436139062-f60a71c5c892?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&w=1200&auto=format&fit=crop',
     ];
 
     let currentImage = 0;
@@ -645,6 +645,44 @@
                     p.style.display = "none";
                 }
             }
+        });
+    }
+
+    // Multi-category filter logic
+    const filterCategories = document.getElementById('filterCategories');
+    if (filterCategories) {
+        filterCategories.addEventListener('click', function(e) {
+            const item = e.target.closest('.category-item');
+            if (!item) return;
+            const cat = item.getAttribute('data-category');
+            const url = new URL(window.location.href);
+            let params = url.searchParams;
+            let current = params.getAll('category');
+            if (current.includes(cat)) {
+                // Remove category
+                current = current.filter(c => c !== cat);
+            } else {
+                // Add category
+                current.push(cat);
+            }
+            // Remove all category params
+            params.delete('category');
+            // Add back selected
+            current.forEach(c => params.append('category', c));
+            // Build new URL
+            url.search = params.toString();
+            window.location.href = url.pathname + (url.search ? '?' + url.search : '');
+        });
+    }
+
+    // Clear Filters button logic
+    const clearBtn = document.getElementById('clearFiltersBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = new URL(window.location.href);
+            url.searchParams.delete('category');
+            window.location.href = url.pathname + (url.search ? '?' + url.search : '');
         });
     }
 </script>

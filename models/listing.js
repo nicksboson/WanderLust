@@ -35,6 +35,10 @@ const listingSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref:"user"
     },
+    category :{
+        type: [String],
+        enum: ["Farms", "Rooms", "Amazing views", "Iconic cities", "Amazing pools", "Beach", "Cabins", "Lakefront"]
+    }
     
 });
 
