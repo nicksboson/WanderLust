@@ -44,18 +44,6 @@
 
 ---
 
-## 🖼️ Screenshots
-
-| Home Page | Listings Page |
-|-----------|---------------|
-| ![Home](https://via.placeholder.com/400x250/4A5568/FFFFFF?text=Home+Page) | ![Listings](https://via.placeholder.com/400x250/4A5568/FFFFFF?text=Listings) |
-
-| Add Listing | Reviews |
-|-------------|---------|
-| ![Add](https://via.placeholder.com/400x250/4A5568/FFFFFF?text=Add+Listing) | ![Reviews](https://via.placeholder.com/400x250/4A5568/FFFFFF?text=Reviews) |
-
----
-
 ## 🚀 Installation
 
 1. Clone the repo:
@@ -68,13 +56,15 @@
       ```bash
    npm install
 
-  .env
+  3. create .env
       ```bash
     DB_URL=mongodb+srv://<user>:<password>@cluster.mongodb.net/dbname
     CLOUDINARY_CLOUD_NAME=your_cloud_name
     CLOUDINARY_KEY=your_api_key
     CLOUDINARY_SECRET=your_api_secret
-    SESSION_SECRET=your_secret_key          
+    SESSION_SECRET=your_secret_key  
+
+---  
   
   🏗️ Project Structure
   
@@ -101,26 +91,28 @@
   │   └── auth/
   ├── middleware.js
   └── app.js
+---
+  
+  
+**  🤝 Contributing**
 
-  
-  🤝 Contributing
   Fork the project
-  
-  Create your feature branch (git checkout -b feature/AmazingFeature)
-  
-  Commit your changes (git commit -m 'Add some AmazingFeature')
-  
-  Push to the branch (git push origin feature/AmazingFeature)
-  
-  Open a Pull Request
+        
+        Create your feature branch (git checkout -b feature/AmazingFeature)
+        Commit your changes (git commit -m 'Add some AmazingFeature')
+        Push to the branch (git push origin feature/AmazingFeature)
+        Open a Pull Request
   
   📜 License
   Distributed under the MIT License. See LICENSE for more information.
   
   ✉️ Contact
     Nikhil - nikhil.garkoti0001@gmail.com 
+
+---    
   
   🙌 Acknowledgments
+  
     Leaflet.js for maps
     
     Bootstrap for UI components
@@ -129,10 +121,13 @@
   
   
   Key improvements:
+  
     - Proper Markdown formatting throughout
     - Organized tech stack in a clean table
     - Added placeholder banners with theme colors
     - Structured installation steps clearly
     - Included project tree visualization
     - Added contact and acknowledgments sections
+
+---    
   
