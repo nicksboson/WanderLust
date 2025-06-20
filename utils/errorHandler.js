@@ -42,6 +42,11 @@ const errorHandler = (err, req, res, next) => {
         message = Object.values(err.errors).map(val => val.message).join(', ');
     }
 
+    // Render a custom error page for 404 errors
+    if (status === 404) {
+        return res.status(404).render('listings/error', { message });
+    }
+
     // Set error flash message and redirect to the listings index page
     req.flash('error', message);
     res.redirect('/listings');

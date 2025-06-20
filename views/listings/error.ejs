@@ -7,8 +7,8 @@
         </div>
         <h1 class="error-title">Oops! Something went wrong</h1>
         <div class="error-details">
-            <p class="error-message"><%= err.message %></p>
-            <p class="error-status">Status Code: <%= err.status %></p>
+            <p class="error-message"><%= message %></p>
+            <p class="error-status">Status Code: <%= typeof status !== 'undefined' ? status : 404 %></p>
         </div>
         <div class="error-actions">
             <a href="/listings" class="btn-home" role="button">
