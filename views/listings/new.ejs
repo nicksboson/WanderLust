@@ -1,4 +1,22 @@
 <% layout('/layouts/boilerplate') %>
+<style>
+@media (max-width: 480px) {
+  .form-container, .container {
+    max-width: 100% !important;
+    padding: 0 0.2rem !important;
+  }
+  .card, .card-body {
+    padding: 0.7rem 0.3rem !important;
+  }
+  h1, h2, h3 {
+    font-size: 1.1rem !important;
+  }
+  .btn, .btn-lg {
+    font-size: 1rem !important;
+    padding: 0.7rem 0.5rem !important;
+  }
+}
+</style>
 <div class="form-container">
     <h1 class="form-title">Create New Listing</h1>
     <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
