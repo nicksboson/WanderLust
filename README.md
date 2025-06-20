@@ -67,16 +67,14 @@
 
       ```bash
    npm install
-   Create .env file:
 
   .env
-  DB_URL=mongodb+srv://<user>:<password>@cluster.mongodb.net/dbname
-  CLOUDINARY_CLOUD_NAME=your_cloud_name
-  CLOUDINARY_KEY=your_api_key
-  CLOUDINARY_SECRET=your_api_secret
-  SESSION_SECRET=your_secret_key
-  Start the server:
-  
+      ```bash
+    DB_URL=mongodb+srv://<user>:<password>@cluster.mongodb.net/dbname
+    CLOUDINARY_CLOUD_NAME=your_cloud_name
+    CLOUDINARY_KEY=your_api_key
+    CLOUDINARY_SECRET=your_api_secret
+    SESSION_SECRET=your_secret_key          
   
   🏗️ Project Structure
   
