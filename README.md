@@ -1,6 +1,6 @@
 # 🌍 WanderLust - Airbnb-Style Travel Accommodations  
 
-![WanderLust Banner](https://via.placeholder.com/1200x400/2D3748/FFFFFF?text=WanderLust+-+Discover+Your+Perfect+Stay)
+![WanderLust ]([https://via.placeholder.com/1200x400/2D3748/FFFFFF?text=WanderLust+-+Discover+Your+Perfect+Stay](https://drive.google.com/file/d/162gxL6vuhrqfiscwfPWd6MC0GTDaCkId/view?usp=sharing))
 
 **A full-stack travel booking platform** with property listings, reviews, and interactive maps.
 
