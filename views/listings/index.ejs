@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<div id="listings-grid-container"></div>
+
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 listing-grid">
         <% for(let list of listings) { %>
@@ -105,7 +105,6 @@
             </div>
         <% } %>
     </div>
-</div>
 </div>
 
 <div id="loader-overlay">
@@ -722,56 +721,20 @@
             params.delete('category');
             // Add back selected
             current.forEach(c => params.append('category', c));
-            // Build new URL for AJAX
-            const fetchUrl = '/listings/partial' + (params.toString() ? '?' + params.toString() : '');
-            fetch(fetchUrl)
-                .then(res => res.text())
-                .then(html => {
-                    // Replace the listings grid
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newGrid = doc.querySelector('#listings-grid-container');
-                    const oldGrid = document.querySelector('#listings-grid-container');
-                    if (newGrid && oldGrid) {
-                        oldGrid.replaceWith(newGrid);
-                    }
-                    // Update active categories
-                    document.querySelectorAll('.category-item').forEach(el => {
-                        if (current.includes(el.getAttribute('data-category'))) {
-                            el.classList.add('active-category');
-                        } else {
-                            el.classList.remove('active-category');
-                        }
-                    });
-                    // Update URL without reload
-                    window.history.replaceState({}, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
-                });
+            // Build new URL
+            url.search = params.toString();
+            window.location.href = url.pathname + (url.search ? '?' + url.search : '');
         });
     }
 
-    // Clear Filters button logic (AJAX)
+    // Clear Filters button logic
     const clearBtn = document.getElementById('clearFiltersBtn');
     if (clearBtn) {
         clearBtn.addEventListener('click', function(e) {
             e.preventDefault();
             const url = new URL(window.location.href);
             url.searchParams.delete('category');
-            const fetchUrl = '/listings/partial' + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '');
-            fetch(fetchUrl)
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newGrid = doc.querySelector('#listings-grid-container');
-                    const oldGrid = document.querySelector('#listings-grid-container');
-                    if (newGrid && oldGrid) {
-                        oldGrid.replaceWith(newGrid);
-                    }
-                    document.querySelectorAll('.category-item').forEach(el => {
-                        el.classList.remove('active-category');
-                    });
-                    window.history.replaceState({}, '', window.location.pathname);
-                });
+            window.location.href = url.pathname + (url.search ? '?' + url.search : '');
         });
     }
 
