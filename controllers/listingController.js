@@ -145,40 +145,4 @@ exports.deleteListing = async (req, res) => {
     }
     req.flash('error', 'Listing deleted successfully!');
     res.redirect('/listings');
-};
-
-exports.getPartialListings = async (req, res) => {
-    console.log('AJAX filter query:', req.query); // Debugging line
-    const { search, category } = req.query;
-    let query = {};
-    if (search) {
-        const searchRegex = new RegExp(search, 'i');
-        query = {
-            $or: [
-                { title: { $regex: searchRegex } },
-                { description: { $regex: searchRegex } },
-                { location: { $regex: searchRegex } },
-                { country: { $regex: searchRegex } }
-            ]
-        };
-    }
-    if (category) {
-        if (Array.isArray(category)) {
-            query.category = { $in: category };
-        } else {
-            query.category = category;
-        }
-    }
-    const listings = await Listing.find(query).populate('reviews');
-    listings.forEach(listing => {
-        if (listing.reviews && listing.reviews.length > 0) {
-            const totalRating = listing.reviews.reduce((sum, review) => sum + review.rating, 0);
-            listing.averageRating = (totalRating / listing.reviews.length).toFixed(1);
-            listing.numReviews = listing.reviews.length;
-        } else {
-            listing.averageRating = 0;
-            listing.numReviews = 0;
-        }
-    });
-    res.render('listings/_grid', { listings });
 }; 
