@@ -98,6 +98,17 @@ app.use((req, res, next) => {
     next();
 });
 
+// Global request timeout middleware (15 seconds)
+app.use((req, res, next) => {
+    res.setTimeout(15000, () => {
+        if (!res.headersSent) {
+            req.flash('error', 'Request timed out. Please try again.');
+            return res.status(503).render('listings/error', { message: 'Request timed out. Please try again.' });
+        }
+    });
+    next();
+});
+
 console.log('Models before router usage:', mongoose.modelNames());
 
 // Routes
