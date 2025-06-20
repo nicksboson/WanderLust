@@ -58,11 +58,11 @@
 
   3. create .env
       ```bash
-    DB_URL=mongodb+srv://<user>:<password>@cluster.mongodb.net/dbname
-    CLOUDINARY_CLOUD_NAME=your_cloud_name
-    CLOUDINARY_KEY=your_api_key
-    CLOUDINARY_SECRET=your_api_secret
-    SESSION_SECRET=your_secret_key  
+            DB_URL=mongodb+srv://<user>:<password>@cluster.mongodb.net/dbname
+            CLOUDINARY_CLOUD_NAME=your_cloud_name
+            CLOUDINARY_KEY=your_api_key
+            CLOUDINARY_SECRET=your_api_secret
+            SESSION_SECRET=your_secret_key  
 
 ---  
   
@@ -91,6 +91,7 @@
   │   └── auth/
   ├── middleware.js
   └── app.js
+  
 ---
   
   
