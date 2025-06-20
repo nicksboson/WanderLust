@@ -24,6 +24,7 @@ const userRouter = require('./routes/user.js');
 
 // Configure Express
 configureExpress(app);
+app.set('trust proxy', 1);
 
 const store = MongoStore.create({
     mongoUrl: process.env.ATLASDB_URL,
