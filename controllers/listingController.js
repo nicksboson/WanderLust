@@ -92,21 +92,28 @@ exports.renderEditForm = async (req, res) => {
 
 exports.updateListing = async (req, res) => {
     const { id } = req.params;
-    const url = req.file.path;
     if (!isValidId(id)) {
         throw new ExpressError(400, "Invalid listing ID");
     }
+
+    let imageUrl;
+    if (req.file) {
+        imageUrl = req.file.path;
+    } else {
+        // Fetch the current listing from the database to get the existing image
+        const currentListing = await Listing.findById(id);
+        imageUrl = currentListing.image;
+    }
+
     const updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing, { 
         new: true,
         runValidators: true
     });
-    if(typeof req.file!== "undefined"){
-    updatedListing.image = url;
-await updatedListing.save();
-}
     if (!updatedListing) {
         throw new ExpressError(404, 'Listing not found');
     }
+    updatedListing.image = imageUrl;
+    await updatedListing.save();
     req.flash('info', 'Listing updated successfully!');
     res.redirect(`/listings/${updatedListing._id}`);
 };
