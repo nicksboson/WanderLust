@@ -1,4 +1,4 @@
-# 🌍 WanderLust - Airbnb-Style Travel Accommodations  
+# 🌍 WanderLust - Where travel meets comfort and experience
  
 
 **A full-stack travel booking platform** with property listings, reviews, and interactive maps - built with Node.js, Express, and MongoDB.
