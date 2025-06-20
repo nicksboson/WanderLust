@@ -57,7 +57,17 @@ const listingSchema = Joi.object({
             .uri()
             .messages({
                 'string.uri': 'Image must be a valid URL'
-            })
+            }),
+        category: Joi.array().items(
+            Joi.string().valid(
+                "Farms", "Rooms", "Amazing views", "Iconic cities", "Amazing pools", "Beach", "Cabins", "Lakefront"
+            )
+        ).min(1).required().messages({
+            'array.base': 'Category must be an array',
+            'array.includes': 'Invalid category value',
+            'array.min': 'At least one category must be selected',
+            'any.required': 'Category is required'
+        })
     }).required()
 }).messages({
     'object.base': 'Invalid listing data',

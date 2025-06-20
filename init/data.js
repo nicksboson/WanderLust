@@ -1,3 +1,10 @@
+function getRandomCategories() {
+  const all = ["Farms", "Rooms", "Amazing views", "Iconic cities", "Amazing pools", "Beach", "Cabins", "Lakefront"];
+  const count = Math.floor(Math.random() * 3) + 1; // 1-3 categories
+  const shuffled = all.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
 const sampleListings = [
   {
     title: "Cozy Beachfront Cottage",
@@ -261,6 +268,6 @@ const sampleListings = [
     location: "Costa Rica",
     country: "Costa Rica",
   },
-];
+].map(listing => ({ ...listing, category: getRandomCategories() }));
 
 module.exports = { data: sampleListings };

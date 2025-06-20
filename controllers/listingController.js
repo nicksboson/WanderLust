@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 exports.getAllListings = async (req, res) => {
-    const { search } = req.query;
+    const { search, category } = req.query;
     let query = {};
     if (search) {
         const searchRegex = new RegExp(search, 'i');
@@ -19,6 +19,13 @@ exports.getAllListings = async (req, res) => {
             ]
         };
     }
+    if (category) {
+        if (Array.isArray(category)) {
+            query.category = { $in: category };
+        } else {
+            query.category = category;
+        }
+    }
     const listings = await Listing.find(query).populate('reviews');
     listings.forEach(listing => {
         if (listing.reviews && listing.reviews.length > 0) {
@@ -30,7 +37,7 @@ exports.getAllListings = async (req, res) => {
             listing.numReviews = 0;
         }
     });
-    res.render('./listings/index.ejs', { listings, search });
+    res.render('./listings/index.ejs', { listings, search, category });
 };
 
 exports.renderNewForm = (req, res) => {
@@ -58,6 +65,10 @@ exports.getMyListings = async (req, res) => {
 
 exports.createListing = async (req, res) => {
     let url = req.file.path;
+    // Ensure category is always an array
+    if (req.body.listing.category && !Array.isArray(req.body.listing.category)) {
+        req.body.listing.category = [req.body.listing.category];
+    }
     const newlisting = new Listing(req.body.listing);
     newlisting.owner = req.user._id;
     newlisting.image = url;
@@ -94,6 +105,11 @@ exports.updateListing = async (req, res) => {
     const { id } = req.params;
     if (!isValidId(id)) {
         throw new ExpressError(400, "Invalid listing ID");
+    }
+
+    // Ensure category is always an array
+    if (req.body.listing.category && !Array.isArray(req.body.listing.category)) {
+        req.body.listing.category = [req.body.listing.category];
     }
 
     let imageUrl;
