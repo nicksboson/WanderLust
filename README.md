@@ -4,7 +4,7 @@
 **A full-stack travel booking platform** with property listings, reviews, and interactive maps - built with Node.js, Express, and MongoDB.
 
 🔗 **Try it out :** [https://wanderlust-8bks.onrender.com/listings](https://wanderlust-8bks.onrender.com/listings)  
-📌 **GitHub Repo:** [https://github.com/your-username/WanderLust](https://github.com/your-username/WanderLust)  
+📌 **GitHub Repo:** [https://github.com/your-username/WanderLust](https://github.com/nicksboson/WanderLust)  
 
 ---
 
