@@ -8,7 +8,20 @@ const userController = require('../controllers/userController');
 router.get('/signup', userController.renderSignupForm);
 
 // Signup logic
-router.post('/signup', wrapAsync(userController.signup));
+router.post('/signup', async (req, res, next) => {
+    try {
+        const { username, email, password } = req.body;
+        const user = new User({ username, email });
+        await User.register(user, password);
+        req.login(user, function(err) {
+            if (err) { return next(err); }
+            return res.redirect('/account'); // Redirect to profile page after signup
+        });
+    } catch (err) {
+        req.flash('error', err.message);
+        res.redirect('/signup');
+    }
+});
 
 // Login form
 router.get('/login', userController.renderLoginForm);
@@ -17,7 +30,9 @@ router.get('/login', userController.renderLoginForm);
 router.post('/login', passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
-}), userController.login);
+}), (req, res) => {
+    res.redirect('/account'); // Redirect to profile page after login
+});
 
 // Logout
 router.get('/logout', userController.logout);
