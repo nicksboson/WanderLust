@@ -10,7 +10,7 @@ const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-// const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('./models/user');      
 console.log('Models after User import (initial):', mongoose.modelNames());
 
@@ -63,8 +63,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({ usernameField: 'email' }, User.authenticate()));
 
-// Google OAuth Strategy - Commented out until credentials are set up
-/*
+// Google OAuth Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -72,24 +71,34 @@ passport.use(new GoogleStrategy({
 },
 async function(accessToken, refreshToken, profile, cb) {
     try {
-        // Check if user already exists
         let user = await User.findOne({ googleId: profile.id });
-        
         if (!user) {
-            // Create new user if doesn't exist
-            user = await User.create({
-                googleId: profile.id,
-                username: profile.displayName,
-                email: profile.emails[0].value
-            });
+            // Try to find user by email (local signup)
+            user = await User.findOne({ email: profile.emails[0].value });
+            if (user) {
+                // Merge Google info into existing user
+                user.googleId = profile.id;
+                user.username = user.username || profile.displayName;
+                user.avatar = user.avatar || profile.photos?.[0]?.value;
+                await user.save();
+            } else {
+                // Create new user if not found
+                user = await User.create({
+                    googleId: profile.id,
+                    username: profile.displayName,
+                    email: profile.emails[0].value,
+                    avatar: profile.photos?.[0]?.value
+                });
+            }
+        } else if (!user.avatar && profile.photos?.[0]?.value) {
+            user.avatar = profile.photos[0].value;
+            await user.save();
         }
-        
         return cb(null, user);
     } catch (err) {
         return cb(err, null);
     }
 }));
-*/
 
 
 
@@ -137,8 +146,7 @@ app.get('/', (req, res) => {
     res.redirect("/listings");
 });
 
-// Google OAuth Routes - Commented out until credentials are set up
-/*
+// Google OAuth Routes
 app.get('/auth/google',
     passport.authenticate('google', { 
         scope: ['profile', 'email'],
@@ -151,14 +159,12 @@ app.get('/auth/google/callback',
         failureRedirect: '/login',
         failureFlash: true
     }),
-    (req, res) => {
+    async (req, res) => {
         req.flash('success', 'Welcome to WanderLust!');
-        const redirectUrl = req.session.returnTo || '/listings';
-        delete req.session.returnTo;
-        res.redirect(redirectUrl);
+        // Ensure user profile is updated in DB (already handled in strategy)
+        res.redirect('/account'); // Redirect to profile/account page after Google login
     }
 );
-*/
 
 app.get("/demouser",async (req,res)=>{
     let fakeUser = new User({
@@ -188,4 +194,4 @@ connectDB().then(() => {
 }).catch(err => {
     console.error("Failed to start server:", err);
     process.exit(1);
-}); 
+});
